@@ -1,15 +1,6 @@
 
 import { toast } from "@/components/ui/use-toast";
-
-export interface TravelFormData {
-  source: string;
-  destination: string;
-  startDate: string;
-  endDate: string;
-  budget: string;
-  travelers: number;
-  interests: string[];
-}
+import { TravelFormData } from "@/types/travel";
 
 export interface TravelPlan {
   itinerary: string;

@@ -13,8 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Card, CardContent } from "@/components/ui/card";
-import { interestOptions, budgetOptions } from "@/types/travel";
-import { TravelFormData } from "@/services/geminiApi";
+import { interestOptions, budgetOptions, TravelFormData } from "@/types/travel";
 
 const formSchema = z.object({
   source: z.string().min(1, "Source is required"),
@@ -55,9 +54,13 @@ export const TravelForm: React.FC<TravelFormProps> = ({ onSubmit, isLoading }) =
 
   const handleFormSubmit = (values: z.infer<typeof formSchema>) => {
     onSubmit({
-      ...values,
+      source: values.source,
+      destination: values.destination,
       startDate: format(values.startDate, "yyyy-MM-dd"),
       endDate: format(values.endDate, "yyyy-MM-dd"),
+      budget: values.budget,
+      travelers: values.travelers,
+      interests: values.interests,
     });
   };
 
