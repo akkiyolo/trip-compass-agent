@@ -142,7 +142,77 @@ export async function getFlightDetails(): Promise<FlightDetails> {
         "type": "One way",
         "airline_logo": "https://www.gstatic.com/flights/airline_logos/70px/6E.png",
         "booking_token": "WyJDalJJT1hob01HZFdWRVk0TVRSQlFTMU5hbWRDUnkwdExTMHRMUzB0TFhaM2RHb3hNMEZCUVVGQlIyZHJSVWRyUVVKUlNUWkJFZzAyUlRJd05UZDhOa1V4TmpNeEdnc0lsS1lCRUFJYUExVlRSRGdjY0pTbUFRPT0iLFtbIkRFTCIsIjIwMjUtMDUtMTQiLCJDQ1UiLG51bGwsIjZFIiwiMjA1NyJdLFsiQ0NVIiwiMjAyNS0wNS0xNCIsIkhBTiIsbnVsbCwiNkUiLCIxNjMxIl1dXQ=="
-        }
+      },
+      {
+        "flights": [
+          {
+            "departure_airport": {
+              "name": "Indira Gandhi International Airport",
+              "id": "DEL",
+              "time": "2025-05-14 22:05"
+            },
+            "arrival_airport": {
+              "name": "Kuala Lumpur International Airport",
+              "id": "KUL",
+              "time": "2025-05-15 06:00"
+            },
+            "duration": 325,
+            "airplane": "Boeing 737",
+            "airline": "Batik Air",
+            "airline_logo": "https://www.gstatic.com/flights/airline_logos/70px/OD.png",
+            "travel_class": "Economy",
+            "flight_number": "OD 206",
+            "legroom": "32 in",
+            "extensions": [
+              "Above average legroom (32 in)",
+              "In-seat USB outlet",
+              "On-demand video",
+              "Carbon emissions estimate: 328 kg"
+            ],
+            "overnight": true
+          },
+          {
+            "departure_airport": {
+              "name": "Kuala Lumpur International Airport",
+              "id": "KUL",
+              "time": "2025-05-15 10:10"
+            },
+            "arrival_airport": {
+              "name": "Noi Bai International Airport",
+              "id": "HAN",
+              "time": "2025-05-15 12:30"
+            },
+            "duration": 200,
+            "airplane": "Boeing 737MAX 8 Passenger",
+            "airline": "Batik Air",
+            "airline_logo": "https://www.gstatic.com/flights/airline_logos/70px/OD.png",
+            "travel_class": "Economy",
+            "flight_number": "OD 571",
+            "legroom": "29 in",
+            "extensions": [
+              "Below average legroom (29 in)",
+              "Stream media to your device",
+              "Carbon emissions estimate: 154 kg"
+            ]
+          }
+        ],
+        "layovers": [
+          {
+            "duration": 250,
+            "name": "Kuala Lumpur International Airport",
+            "id": "KUL"
+          }
+        ],
+        "total_duration": 775,
+        "carbon_emissions": {
+          "this_flight": 483000,
+          "typical_for_this_route": 224000,
+          "difference_percent": 116
+        },
+        "price": 216,
+        "type": "One way",
+        "airline_logo": "https://www.gstatic.com/flights/airline_logos/70px/OD.png",
+        "booking_token": "WyJDalJJT1hob01HZFdWRVk0TVRSQlFTMU5hbWRDUnkwdExTMHRMUzB0TFhaM2RHb3hNMEZCUVVGQlIyZHJSVWRyUVVKUlNUWkJFZ3RQUkRJd05ueFBSRFUzTVJvTENNU29BUkFDR2dOVlUwUTRISERFcUFFPSIsW1siREVMIiwiMjAyNS0wNS0xNCIsIktVTCIsbnVsbCwiT0QiLCIyMDYiXSxbIktVTCIsIjIwMjUtMDUtMTUiLCJIQU4iLG51bGwsIk9EIiwiNTcxIl1dXQ=="
       }
     ]
   };

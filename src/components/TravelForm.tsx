@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -307,7 +308,7 @@ export const TravelForm: React.FC<TravelFormProps> = ({ onSubmit, isLoading }) =
                       Include Transportation Details
                     </FormLabel>
                     <div className="text-sm text-muted-foreground">
-                      Get flight options for your trip
+                      Get flight options from SerpAPI for your trip
                     </div>
                   </div>
                   <FormControl>
