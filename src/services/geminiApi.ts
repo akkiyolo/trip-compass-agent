@@ -18,10 +18,11 @@ export interface TravelPlan {
   travelTips: string[];
 }
 
+const GEMINI_API_KEY = "AIzaSyAgckSiXT8GYUfJeoZu16NDud6wKiUiS4Y";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+
 export async function generateTravelPlan(formData: TravelFormData): Promise<TravelPlan> {
   try {
-    // In a real implementation, this would be an actual API call to Gemini
-    // For this demo, we'll simulate a response after a delay
     const prompt = `
       I need a detailed travel plan with the following parameters:
       - Traveling from: ${formData.source}
@@ -31,42 +32,90 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
       - Number of travelers: ${formData.travelers}
       - Interests: ${formData.interests.join(", ")}
       
-      Please provide:
-      1. A day-by-day itinerary
-      2. Recommended places to visit, accommodations, activities, and restaurants
-      3. Budget breakdown
-      4. Travel tips specific to the destination
+      Please provide your response in the following JSON format exactly, with no additional text or explanations:
+      {
+        "itinerary": "Day 1: ... Day 2: ... etc.",
+        "recommendations": {
+          "places": ["Place 1", "Place 2", "Place 3"],
+          "accommodations": ["Accommodation 1", "Accommodation 2", "Accommodation 3"],
+          "activities": ["Activity 1", "Activity 2", "Activity 3"],
+          "restaurants": ["Restaurant 1", "Restaurant 2", "Restaurant 3"],
+          "transportationTips": ["Tip 1", "Tip 2", "Tip 3"]
+        },
+        "budget": {
+          "breakdown": "Accommodation: X%, Food: Y%, Activities: Z%, Transportation: W%",
+          "estimatedTotal": "Estimated total for your stay: $XXXX"
+        },
+        "travelTips": ["Tip 1", "Tip 2", "Tip 3"]
+      }
     `;
 
-    // Log the prompt for debugging purposes
     console.log("Sending prompt to Gemini:", prompt);
     
-    // In a real implementation, this would call the Gemini API
-    // For now we'll simulate a response after a delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Placeholder response - in reality, this would come from the Gemini API
-    const mockResponse: TravelPlan = {
-      itinerary: `Day 1: Arrive in ${formData.destination}, check into hotel, explore nearby areas\nDay 2: Visit top attractions in the morning, local food tour in the evening\nDay 3: Day trip to surrounding areas`,
-      recommendations: {
-        places: ["Central Park", "Main Museum", "Historic District"],
-        accommodations: ["Luxury Hotel", "Budget-friendly Inn", "Local Guesthouse"],
-        activities: ["Guided Walking Tour", "Cooking Class", "Sunset Cruise"],
-        restaurants: ["Local Cuisine Restaurant", "Seafood Bistro", "Street Food Market"],
-        transportationTips: ["Use public transit for city center", "Rent a car for day trips", "Walking is best for the historic district"]
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      budget: {
-        breakdown: "Accommodation: 40%, Food: 30%, Activities: 20%, Transportation: 10%",
-        estimatedTotal: "Estimated total for your stay: $1,500"
-      },
-      travelTips: [
-        "Book accommodations in advance",
-        "Learn a few basic phrases in the local language",
-        "Check the weather forecast before packing"
-      ]
-    };
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2048,
+        }
+      })
+    });
 
-    return mockResponse;
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API error:", errorText);
+      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+    console.log("Gemini API response:", responseData);
+
+    // Extract the text from the response
+    const generatedText = responseData.candidates[0].content.parts[0].text;
+    
+    // Parse the JSON from the text
+    // Use a try-catch to handle potential JSON parsing issues
+    try {
+      // Extract the JSON part from the response text
+      // (Gemini might sometimes include additional text around the JSON)
+      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? jsonMatch[0] : generatedText;
+      const travelPlan: TravelPlan = JSON.parse(jsonStr);
+      
+      // Validate that the parsed object has the expected structure
+      if (!travelPlan.itinerary || !travelPlan.recommendations || !travelPlan.budget || !travelPlan.travelTips) {
+        throw new Error("Gemini response is missing required fields");
+      }
+      
+      return travelPlan;
+    } catch (parseError) {
+      console.error("Error parsing Gemini response:", parseError);
+      console.log("Raw response text:", generatedText);
+      
+      // Fall back to the mock response if parsing fails
+      toast({
+        title: "Warning",
+        description: "Couldn't parse AI response. Using fallback travel plan.",
+        variant: "destructive"
+      });
+      
+      return createFallbackTravelPlan(formData);
+    }
     
   } catch (error) {
     console.error("Error generating travel plan:", error);
@@ -75,6 +124,31 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
       description: "Failed to generate travel plan. Please try again.",
       variant: "destructive"
     });
-    throw error;
+    
+    // In case of API failure, return a fallback plan
+    return createFallbackTravelPlan(formData);
   }
+}
+
+// Fallback function to provide a mock response if the API fails
+function createFallbackTravelPlan(formData: TravelFormData): TravelPlan {
+  return {
+    itinerary: `Day 1: Arrive in ${formData.destination}, check into hotel, explore nearby areas\nDay 2: Visit top attractions in the morning, local food tour in the evening\nDay 3: Day trip to surrounding areas`,
+    recommendations: {
+      places: ["Central Park", "Main Museum", "Historic District"],
+      accommodations: ["Luxury Hotel", "Budget-friendly Inn", "Local Guesthouse"],
+      activities: ["Guided Walking Tour", "Cooking Class", "Sunset Cruise"],
+      restaurants: ["Local Cuisine Restaurant", "Seafood Bistro", "Street Food Market"],
+      transportationTips: ["Use public transit for city center", "Rent a car for day trips", "Walking is best for the historic district"]
+    },
+    budget: {
+      breakdown: "Accommodation: 40%, Food: 30%, Activities: 20%, Transportation: 10%",
+      estimatedTotal: "Estimated total for your stay: $1,500"
+    },
+    travelTips: [
+      "Book accommodations in advance",
+      "Learn a few basic phrases in the local language",
+      "Check the weather forecast before packing"
+    ]
+  };
 }
