@@ -1,6 +1,7 @@
 
 import { toast } from "@/components/ui/use-toast";
-import { TravelFormData } from "@/types/travel";
+import { TravelFormData, FlightDetails } from "@/types/travel";
+import { getFlightDetails } from "@/services/flightApi";
 
 export interface TravelPlan {
   itinerary: string;
@@ -16,6 +17,7 @@ export interface TravelPlan {
     estimatedTotal: string;
   };
   travelTips: string[];
+  flightDetails?: FlightDetails;
 }
 
 const GEMINI_API_KEY = "AIzaSyAgckSiXT8GYUfJeoZu16NDud6wKiUiS4Y";
@@ -99,6 +101,21 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
       if (!travelPlan.itinerary || !travelPlan.recommendations || !travelPlan.budget || !travelPlan.travelTips) {
         throw new Error("Gemini response is missing required fields");
       }
+
+      // If transportation details were requested, fetch flight details
+      if (formData.includeTransportation) {
+        try {
+          const flightDetails = await getFlightDetails();
+          travelPlan.flightDetails = flightDetails;
+        } catch (flightError) {
+          console.error("Error fetching flight details:", flightError);
+          toast({
+            title: "Warning",
+            description: "Couldn't fetch flight details. Travel plan was generated without them.",
+            variant: "destructive"
+          });
+        }
+      }
       
       return travelPlan;
     } catch (parseError) {
@@ -112,7 +129,19 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
         variant: "destructive"
       });
       
-      return createFallbackTravelPlan(formData);
+      const fallbackPlan = createFallbackTravelPlan(formData);
+      
+      // If transportation details were requested, fetch flight details
+      if (formData.includeTransportation) {
+        try {
+          const flightDetails = await getFlightDetails();
+          fallbackPlan.flightDetails = flightDetails;
+        } catch (flightError) {
+          console.error("Error fetching flight details:", flightError);
+        }
+      }
+      
+      return fallbackPlan;
     }
     
   } catch (error) {
@@ -124,7 +153,19 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
     });
     
     // In case of API failure, return a fallback plan
-    return createFallbackTravelPlan(formData);
+    const fallbackPlan = createFallbackTravelPlan(formData);
+    
+    // If transportation details were requested, fetch flight details
+    if (formData.includeTransportation) {
+      try {
+        const flightDetails = await getFlightDetails();
+        fallbackPlan.flightDetails = flightDetails;
+      } catch (flightError) {
+        console.error("Error fetching flight details:", flightError);
+      }
+    }
+    
+    return fallbackPlan;
   }
 }
 

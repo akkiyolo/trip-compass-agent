@@ -22,7 +22,9 @@ const Index = () => {
       setTravelPlan(plan);
       toast({
         title: "Success!",
-        description: "Your travel plan is ready.",
+        description: data.includeTransportation 
+          ? "Your travel plan with flight options is ready."
+          : "Your travel plan is ready.",
       });
     } catch (error) {
       console.error("Error generating travel plan:", error);

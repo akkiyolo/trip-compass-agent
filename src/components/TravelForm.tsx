@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Calendar as CalendarIcon, MapPin, Users, DollarSign } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Users, DollarSign, Plane } from "lucide-react";
 import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Card, CardContent } from "@/components/ui/card";
 import { interestOptions, budgetOptions, TravelFormData } from "@/types/travel";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
   source: z.string().min(1, "Source is required"),
@@ -34,6 +34,7 @@ const formSchema = z.object({
     .min(1, "At least 1 traveler is required")
     .max(20, "Maximum 20 travelers allowed"),
   interests: z.array(z.string()).min(1, "Select at least one interest"),
+  includeTransportation: z.boolean().optional().default(false),
 });
 
 interface TravelFormProps {
@@ -49,6 +50,7 @@ export const TravelForm: React.FC<TravelFormProps> = ({ onSubmit, isLoading }) =
       destination: "",
       travelers: 2,
       interests: [],
+      includeTransportation: false,
     },
   });
 
@@ -61,6 +63,7 @@ export const TravelForm: React.FC<TravelFormProps> = ({ onSubmit, isLoading }) =
       budget: values.budget,
       travelers: values.travelers,
       interests: values.interests,
+      includeTransportation: values.includeTransportation,
     });
   };
 
@@ -289,6 +292,30 @@ export const TravelForm: React.FC<TravelFormProps> = ({ onSubmit, isLoading }) =
                     ))}
                   </div>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="includeTransportation"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base flex items-center gap-2">
+                      <Plane className="h-4 w-4 text-travel-primary" />
+                      Include Transportation Details
+                    </FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      Get flight options for your trip
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

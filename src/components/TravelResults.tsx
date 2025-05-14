@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MapPin, Calendar, DollarSign, Route, Compass, Hotel, Plane, Car, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import FlightDetails from "./FlightDetails";
 
 interface TravelResultsProps {
   travelPlan: TravelPlan;
@@ -17,6 +18,7 @@ interface TravelResultsProps {
     budget: string;
     travelers: number;
     interests: string[];
+    includeTransportation?: boolean;
   };
   onReset: () => void;
 }
@@ -71,6 +73,12 @@ export const TravelResults: React.FC<TravelResultsProps> = ({
               <span className="text-sm font-medium">{formData.budget} budget</span>
             </div>
           </div>
+
+          {formData.includeTransportation && travelPlan.flightDetails && (
+            <div className="mb-6">
+              <FlightDetails bestFlights={travelPlan.flightDetails.best_flights} />
+            </div>
+          )}
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
