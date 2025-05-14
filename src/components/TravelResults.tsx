@@ -1,25 +1,18 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { TravelPlan } from "@/services/geminiApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MapPin, Calendar, DollarSign, Route, Compass, Hotel, Plane, Car, Users } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Route, Compass, Hotel, Plane, Car, Users, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import FlightDetails from "./FlightDetails";
+import ChatComponent from "./ChatComponent";
+import { TravelFormData } from "@/types/travel";
 
 interface TravelResultsProps {
   travelPlan: TravelPlan;
-  formData: {
-    source: string;
-    destination: string;
-    startDate: string;
-    endDate: string;
-    budget: string;
-    travelers: number;
-    interests: string[];
-    includeTransportation?: boolean;
-  };
+  formData: TravelFormData;
   onReset: () => void;
 }
 
@@ -28,6 +21,8 @@ export const TravelResults: React.FC<TravelResultsProps> = ({
   formData,
   onReset,
 }) => {
+  const [showChat, setShowChat] = useState(false);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', { 
@@ -48,9 +43,19 @@ export const TravelResults: React.FC<TravelResultsProps> = ({
                 {formatDate(formData.startDate)} - {formatDate(formData.endDate)}
               </p>
             </div>
-            <Button variant="secondary" onClick={onReset}>
-              Plan New Trip
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="ghost" 
+                onClick={() => setShowChat(!showChat)}
+                className="text-white hover:text-white hover:bg-travel-dark flex items-center gap-1"
+              >
+                <MessageSquare className="h-4 w-4" />
+                {showChat ? "Hide Chat" : "Ask Questions"}
+              </Button>
+              <Button variant="secondary" onClick={onReset}>
+                Plan New Trip
+              </Button>
+            </div>
           </div>
         </div>
         
@@ -73,6 +78,12 @@ export const TravelResults: React.FC<TravelResultsProps> = ({
               <span className="text-sm font-medium">{formData.budget} budget</span>
             </div>
           </div>
+
+          {showChat && (
+            <div className="mb-6">
+              <ChatComponent formData={formData} />
+            </div>
+          )}
 
           {formData.includeTransportation && travelPlan.flightDetails && (
             <div className="mb-6">

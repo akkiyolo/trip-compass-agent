@@ -105,7 +105,7 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
       // If transportation details were requested, fetch flight details
       if (formData.includeTransportation) {
         try {
-          const flightDetails = await getFlightDetails();
+          const flightDetails = await getFlightDetails(formData.source, formData.destination);
           travelPlan.flightDetails = flightDetails;
         } catch (flightError) {
           console.error("Error fetching flight details:", flightError);
@@ -134,7 +134,7 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
       // If transportation details were requested, fetch flight details
       if (formData.includeTransportation) {
         try {
-          const flightDetails = await getFlightDetails();
+          const flightDetails = await getFlightDetails(formData.source, formData.destination);
           fallbackPlan.flightDetails = flightDetails;
         } catch (flightError) {
           console.error("Error fetching flight details:", flightError);
@@ -158,7 +158,7 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
     // If transportation details were requested, fetch flight details
     if (formData.includeTransportation) {
       try {
-        const flightDetails = await getFlightDetails();
+        const flightDetails = await getFlightDetails(formData.source, formData.destination);
         fallbackPlan.flightDetails = flightDetails;
       } catch (flightError) {
         console.error("Error fetching flight details:", flightError);

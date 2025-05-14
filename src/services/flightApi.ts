@@ -1,7 +1,9 @@
-
 import { FlightDetails } from "@/types/travel";
 
-export async function getFlightDetails(): Promise<FlightDetails> {
+export async function getFlightDetails(source?: string, destination?: string): Promise<FlightDetails> {
+  // Log the search parameters
+  console.log(`Searching flights from ${source} to ${destination}`);
+  
   // Mock response for now
   return {
     "best_flights": [
@@ -9,13 +11,13 @@ export async function getFlightDetails(): Promise<FlightDetails> {
         "flights": [
           {
             "departure_airport": {
-              "name": "Indira Gandhi International Airport",
-              "id": "DEL",
+              "name": `${source || "Indira Gandhi International Airport"}`,
+              "id": `${source ? source.substring(0, 3).toUpperCase() : "DEL"}`,
               "time": "2025-05-14 17:05"
             },
             "arrival_airport": {
-              "name": "Don Mueang International Airport",
-              "id": "DMK",
+              "name": `${destination || "Don Mueang International Airport"}`,
+              "id": `${destination ? destination.substring(0, 3).toUpperCase() : "DMK"}`,
               "time": "2025-05-14 22:50"
             },
             "duration": 255,
@@ -78,8 +80,8 @@ export async function getFlightDetails(): Promise<FlightDetails> {
         "flights": [
           {
             "departure_airport": {
-              "name": "Indira Gandhi International Airport",
-              "id": "DEL",
+              "name": `${source || "Indira Gandhi International Airport"}`,
+              "id": `${source ? source.substring(0, 3).toUpperCase() : "DEL"}`,
               "time": "2025-05-14 18:00"
             },
             "arrival_airport": {
