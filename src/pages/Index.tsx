@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import TravelForm from "@/components/TravelForm";
 import TravelResults from "@/components/TravelResults";
-import { generateTravelPlan, TravelFormData, TravelPlan } from "@/services/geminiApi";
+import { generateTravelPlan, TravelPlan } from "@/services/geminiApi";
+import { TravelFormData } from "@/types/travel";
 import { useToast } from "@/components/ui/use-toast";
 import { Plane } from "lucide-react";
 
