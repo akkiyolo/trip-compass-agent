@@ -89,10 +89,8 @@ export async function generateTravelPlan(formData: TravelFormData): Promise<Trav
     const generatedText = responseData.candidates[0].content.parts[0].text;
     
     // Parse the JSON from the text
-    // Use a try-catch to handle potential JSON parsing issues
     try {
       // Extract the JSON part from the response text
-      // (Gemini might sometimes include additional text around the JSON)
       const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
       const jsonStr = jsonMatch ? jsonMatch[0] : generatedText;
       const travelPlan: TravelPlan = JSON.parse(jsonStr);
